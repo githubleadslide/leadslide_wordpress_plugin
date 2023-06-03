@@ -1,7 +1,7 @@
 <?php
-function lakil_app_page() {
-    $options = get_option('lakil_options');
-    $api_key = $options['lakil_api_key'];
+function leadslide_app_page() {
+    $options = get_option('leadslide_options');
+    $api_key = $options['leadslide_api_key'];
 
     if (empty($api_key)) {
         echo '<p>Please enter your API key. <a href="options-general.php?page=leadslide-api-key-iframe-loader">Go to settings page</a></p>';

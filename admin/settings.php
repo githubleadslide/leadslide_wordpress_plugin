@@ -1,10 +1,10 @@
 <?php
 
-add_action('admin_init', 'lakil_delete_leadslide_template');
-add_action('admin_init', 'lakil_install_leadslide_template');
+add_action('admin_init', 'leadslide_delete_leadslide_template');
+add_action('admin_init', 'leadslide_install_leadslide_template');
 
-// The lakil_settings_page() function will go here
-function lakil_settings_page() {
+// The leadslide_settings_page() function will go here
+function leadslide_settings_page() {
     $theme_dir = get_template_directory();
     $template_file = $theme_dir . '/leadslide-page-template.php';
     ?>
@@ -13,7 +13,7 @@ function lakil_settings_page() {
 
         <form action="options.php" method="post">
             <?php
-            settings_fields('lakil_options');
+            settings_fields('leadslide_options');
             do_settings_sections('leadslide-api-key-iframe-loader');
             submit_button('Save Changes');
             ?>
@@ -35,7 +35,7 @@ function lakil_settings_page() {
     </div>
     <?php
 }
-function lakil_delete_leadslide_template() {
+function leadslide_delete_leadslide_template() {
     global $LS_PAGE_TEMPLATE_PATH;
     if (isset($_POST['action']) && $_POST['action'] === 'delete_leadslide_template') {
         $theme_dir = get_template_directory();
@@ -43,12 +43,12 @@ function lakil_delete_leadslide_template() {
 
         if (file_exists($template_file)) {
             if (unlink($template_file)) {
-                add_settings_error('lakil_options', 'template_deleted', 'Leadslide page template deleted successfully.', 'updated');
+                add_settings_error('leadslide_options', 'template_deleted', 'Leadslide page template deleted successfully.', 'updated');
             } else {
-                add_settings_error('lakil_options', 'delete_failed', 'Could not delete the Leadslide page template. Please check the permissions of your theme directory.');
+                add_settings_error('leadslide_options', 'delete_failed', 'Could not delete the Leadslide page template. Please check the permissions of your theme directory.');
             }
         } else {
-            add_settings_error('lakil_options', 'template_not_found', 'Leadslide page template not found in the theme directory.', 'updated');
+            add_settings_error('leadslide_options', 'template_not_found', 'Leadslide page template not found in the theme directory.', 'updated');
         }
 
         set_transient('settings_errors', get_settings_errors(), 30);
@@ -59,7 +59,7 @@ function lakil_delete_leadslide_template() {
     }
 }
 
-function lakil_install_leadslide_template() {
+function leadslide_install_leadslide_template() {
     global $LS_PAGE_TEMPLATE_PATH;
     if (isset($_POST['action']) && $_POST['action'] === 'install_leadslide_template') {
         $template_file = $LS_PAGE_TEMPLATE_PATH;
@@ -69,15 +69,15 @@ function lakil_install_leadslide_template() {
 
             if (!file_exists($destination_file)) {
                 if (copy($template_file, $destination_file)) {
-                    add_settings_error('lakil_options', 'template_installed', 'Leadslide page template installed successfully.', 'updated');
+                    add_settings_error('leadslide_options', 'template_installed', 'Leadslide page template installed successfully.', 'updated');
                 } else {
-                    add_settings_error('lakil_options', 'install_failed', 'Could not install the Leadslide page template. Please check the permissions of your theme directory.');
+                    add_settings_error('leadslide_options', 'install_failed', 'Could not install the Leadslide page template. Please check the permissions of your theme directory.');
                 }
             } else {
-                add_settings_error('lakil_options', 'template_exists', 'Leadslide page template already exists in the theme directory.', 'updated');
+                add_settings_error('leadslide_options', 'template_exists', 'Leadslide page template already exists in the theme directory.', 'updated');
             }
         } else {
-            add_settings_error('lakil_options', 'template_not_found', 'Leadslide page template not found in the plugin directory.');
+            add_settings_error('leadslide_options', 'template_not_found', 'Leadslide page template not found in the plugin directory.');
         }
 
         set_transient('settings_errors', get_settings_errors(), 30);
@@ -88,23 +88,23 @@ function lakil_install_leadslide_template() {
     }
 }
 
-// The lakil_register_settings() function will go here
-add_action('admin_init', 'lakil_register_settings');
-function lakil_register_settings() {
-    register_setting('lakil_options', 'lakil_options', 'lakil_sanitize_options');
-    add_settings_section('lakil_settings', 'Settings', null, 'leadslide-api-key-iframe-loader');
-    add_settings_field('lakil_api_key', 'API Key', 'lakil_api_key_field', 'leadslide-api-key-iframe-loader', 'lakil_settings');
+// The leadslide_register_settings() function will go here
+add_action('admin_init', 'leadslide_register_settings');
+function leadslide_register_settings() {
+    register_setting('leadslide_options', 'leadslide_options', 'leadslide_sanitize_options');
+    add_settings_section('leadslide_settings', 'Settings', null, 'leadslide-api-key-iframe-loader');
+    add_settings_field('leadslide_api_key', 'API Key', 'leadslide_api_key_field', 'leadslide-api-key-iframe-loader', 'leadslide_settings');
 }
 
-// The lakil_sanitize_options() function will go here
-function lakil_sanitize_options($options) {
+// The leadslide_sanitize_options() function will go here
+function leadslide_sanitize_options($options) {
     $sanitized_options = array();
-    $sanitized_options['lakil_api_key'] = sanitize_text_field($options['lakil_api_key']);
+    $sanitized_options['leadslide_api_key'] = sanitize_text_field($options['leadslide_api_key']);
     return $sanitized_options;
 }
 
-// The lakil_api_key_field() function will go here
-function lakil_api_key_field() {
-    $options = get_option('lakil_options');
-    echo '<input type="text" id="lakil_api_key" name="lakil_options[lakil_api_key]" value="' . esc_attr($options['lakil_api_key']) . '">';
+// The leadslide_api_key_field() function will go here
+function leadslide_api_key_field() {
+    $options = get_option('leadslide_options');
+    echo '<input type="text" id="leadslide_api_key" name="leadslide_options[leadslide_api_key]" value="' . esc_attr($options['leadslide_api_key']) . '">';
 }
