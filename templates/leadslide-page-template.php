@@ -2,6 +2,9 @@
 /*
 Template Name: Leadslide Page
 */
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
 global $BASE_LEADSLIDE_VIEW_URL;
 $leadslide_campaign_id = get_post_meta(get_the_ID(), 'campaign_id', true);
 $leadslide_publish_api_key = get_post_meta(get_the_ID(), 'publish_api_key', true);

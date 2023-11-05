@@ -7,13 +7,10 @@
  * License: GPLv2 or later
  * Text Domain: ai.leadslide.com
  */
-
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
 global $BASE_LS_API_URL, $BASE_LS_VIEW_URL,$LS_PAGE_TEMPLATE_PATH,$BASE_LEADSLIDE_WP_URL ;
-
-
-
-//$BASE_LS_API_URL = 'http://localhost:8080/api/basic/wp/';
-//$BASE_LEADSLIDE_VIEW_URL  = 'http://localhost:8080/campaign/cp/';
 
 $BASE_LS_API_URL = 'https://ai.leadslide.com/api/basic/wp/';
 $BASE_LEADSLIDE_VIEW_URL  = 'https://ai.leadslide.com/campaign/cp/';

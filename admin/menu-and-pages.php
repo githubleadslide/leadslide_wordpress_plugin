@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+
 add_action('admin_menu', 'leadslide_add_settings_page');
 add_action('admin_menu', 'leadslide_add_app_page');
 
