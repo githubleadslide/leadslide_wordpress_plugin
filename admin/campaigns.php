@@ -159,7 +159,9 @@ function leadslide_publish_campaign() {
                     echo '<tr>';
                     echo '<td style="text-align: center;">' . esc_html($item['id']) . '</td>';
                     echo '<td>' . esc_html($item['campaign_name']) . '</td>';
+
                     echo '<td><a target="_blank" href="/' . esc_html($item['url']) . '">' . esc_html($item['url']) . '</a></td>';
+
                     echo '<td>';
                     $page = get_page_by_path($item['url'], OBJECT, 'page');
 
