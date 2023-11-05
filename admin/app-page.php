@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+
 function leadslide_app_page() {
     global $BASE_LS_API_URL, $BASE_LEADSLIDE_WP_URL;
     $options = get_option('leadslide_options');
@@ -16,7 +20,7 @@ function leadslide_app_page() {
         $response = wp_remote_post($BASE_LS_API_URL.'auth/login/', $options);
 
         if (is_wp_error($response)) {
-            echo '<p>Error: ' . $response->get_error_message() . '</p>';
+            echo '<p>Error: ' . esc_html($response->get_error_message()) . '</p>';
         } else {
             $data = json_decode($response['body'], true);
             if (isset($data['url'])) {
@@ -25,7 +29,7 @@ function leadslide_app_page() {
             } else {
                 if(isset($data['message'])){
                     echo '<h2>Error</h2>';
-                    echo '<p>'.$data['message'].'</p>';
+                    echo '<p>'.esc_html($data['message']).'</p>';
                 } else {
                     if (isset($data['detail']) && $data['detail'] === 'Invalid API Key Pre') {
                         echo '<p>Please enter your API key. <a href="options-general.php?page=leadslide-api-key-iframe-loader">Go to settings page</a></p>';

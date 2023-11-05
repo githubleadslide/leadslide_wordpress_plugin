@@ -1,4 +1,7 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
 
 add_action('admin_init', 'leadslide_delete_leadslide_template');
 add_action('admin_init', 'leadslide_install_leadslide_template');
@@ -37,7 +40,9 @@ function leadslide_settings_page() {
 }
 function leadslide_delete_leadslide_template() {
     global $LS_PAGE_TEMPLATE_PATH;
-    if (isset($_POST['action']) && $_POST['action'] === 'delete_leadslide_template') {
+    $action_posted = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
+
+    if ($action_posted === 'delete_leadslide_template') {
         $theme_dir = get_template_directory();
         $template_file = $theme_dir . '/leadslide-page-template.php';
 
@@ -50,7 +55,11 @@ function leadslide_delete_leadslide_template() {
         } else {
             add_settings_error('leadslide_options', 'template_not_found', 'Leadslide page template not found in the theme directory.', 'updated');
         }
-
+        /**
+         * set_transient is used to store the settings errors in a transient, this is  a std WP function
+         * get_settings_errors is used to retrieve the errors from the transient and display them
+         * Both of these functions are WP functions.
+         */
         set_transient('settings_errors', get_settings_errors(), 30);
 
         $goback = add_query_arg('settings-updated', 'true', wp_get_referer());
@@ -61,7 +70,9 @@ function leadslide_delete_leadslide_template() {
 
 function leadslide_install_leadslide_template() {
     global $LS_PAGE_TEMPLATE_PATH;
-    if (isset($_POST['action']) && $_POST['action'] === 'install_leadslide_template') {
+    $action_posted = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
+
+    if ($action_posted === 'install_leadslide_template') {
         $template_file = $LS_PAGE_TEMPLATE_PATH;
         if (file_exists($template_file)) {
             $theme_dir = get_template_directory();
@@ -79,7 +90,11 @@ function leadslide_install_leadslide_template() {
         } else {
             add_settings_error('leadslide_options', 'template_not_found', 'Leadslide page template not found in the plugin directory.');
         }
-
+        /**
+         * set_transient is used to store the settings errors in a transient, this is  a std WP function
+         * get_settings_errors is used to retrieve the errors from the transient and display them
+         * Both of these functions are WP functions.
+         */
         set_transient('settings_errors', get_settings_errors(), 30);
 
         $goback = add_query_arg('settings-updated', 'true', wp_get_referer());

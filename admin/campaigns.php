@@ -1,4 +1,8 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) {
+    exit; // Exit if accessed directly
+}
+
 //add_action('admin_footer', 'leadslide_add_campaign_javascript');
 add_action('wp_ajax_leadslide_add_campaign', 'leadslide_add_campaign');
 add_action('admin_enqueue_scripts', 'leadslide_campaign_scripts');
@@ -16,19 +20,14 @@ function leadslide_admin_notice() {
     if ($message = get_transient('leadslide_admin_notice')) {
         ?>
         <div class="notice notice-success is-dismissible">
-            <p><?php echo $message; ?></p>
+            <p><?php echo esc_html($message); ?></p>
         </div>
         <?php
     }
 }
 
 function leadslide_manage_campaign() {
-    $is_new = true;
-    if(isset($_POST['is_new']))
-    {
-        $is_new = $_POST['is_new'];
-    }
-
+    $is_new = filter_var( isset($_POST['is_new']) ? $_POST['is_new'] : false, FILTER_VALIDATE_BOOLEAN );
 
     if($is_new === true || $is_new === 'true')
     {
@@ -108,7 +107,7 @@ function leadslide_publish_campaign() {
         $response = wp_remote_post($BASE_LS_API_URL.'published-wp-campaigns', $options);
 
         if (is_wp_error($response)) {
-            echo '<p>Error: ' . $response->get_error_message() . '</p>';
+            echo '<p>Error: ' . esc_html($response->get_error_message()) . '</p>';
         } else {
             $data = json_decode($response['body'], true);
             if (isset($data['data'])) {
@@ -160,7 +159,9 @@ function leadslide_publish_campaign() {
                     echo '<tr>';
                     echo '<td style="text-align: center;">' . esc_html($item['id']) . '</td>';
                     echo '<td>' . esc_html($item['campaign_name']) . '</td>';
-                    echo '<td><a target="_blank" href="/' . $item['url'] . '">' . $item['url'] . '</a></td>';
+
+                    echo '<td><a target="_blank" href="/' . esc_html($item['url']) . '">' . esc_html($item['url']) . '</a></td>';
+
                     echo '<td>';
                     $page = get_page_by_path($item['url'], OBJECT, 'page');
 
