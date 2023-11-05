@@ -2,11 +2,7 @@
 Contributors: LeadSlide
 Tags: LeadSlide, Ebook, pdf, opt-in, AI, Email form, conversion optimization, wordpress landing page, wp landing pages, splash pages, landing pages, squeeze pages, lead gen, lead generation, email list, responsive landing pages, templates, inbound marketing, ppc, analytics, AI Marketing, Email Marketing
 Requires at least: 4.1.5
-<<<<<<< HEAD
 Tested up to: 6.3.2
-=======
-Tested up to: 6.0.1
->>>>>>> 4e92bde2686b6076cc969d5f33e9da957ec8a767
 Stable tag: 1.0.3
 Requires PHP: 7.2
 License: GPLv2 or later
