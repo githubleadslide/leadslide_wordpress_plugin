@@ -18,6 +18,7 @@ function leadslide_settings_page() {
             <?php
             settings_fields('leadslide_options');
             do_settings_sections('leadslide-api-key-iframe-loader');
+            wp_nonce_field('leadslide-settings-action', 'leadslide-settings-nonce');
             submit_button('Save Changes');
             ?>
         </form>
@@ -25,11 +26,13 @@ function leadslide_settings_page() {
         <!-- Adding a new section -->
         <?php if (!file_exists($template_file)) : ?>
             <form action="" method="post">
+                <?php wp_nonce_field('leadslide-install-template-action', 'leadslide-install-template-nonce'); ?>
                 <input type="hidden" name="action" value="install_leadslide_template">
                 <?php submit_button('Install Leadslide Page Template'); ?>
             </form>
         <?php else : ?>
             <form action="" method="post">
+                <?php wp_nonce_field('leadslide-delete-template-action', 'leadslide-delete-template-nonce'); ?>
                 <input type="hidden" name="action" value="delete_leadslide_template">
                 <?php submit_button('Delete Leadslide Page Template'); ?>
             </form>
@@ -39,6 +42,12 @@ function leadslide_settings_page() {
     <?php
 }
 function leadslide_delete_leadslide_template() {
+    if (isset($_POST['action']) && $_POST['action'] === 'delete_leadslide_template') {
+        if (!isset($_POST['leadslide-delete-template-nonce']) || !check_admin_referer('leadslide-delete-template-action', 'leadslide-delete-template-nonce')) {
+            wp_die('Security check failed Error L46.');
+        }
+    }
+
     global $LS_PAGE_TEMPLATE_PATH;
     $action_posted = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
 
@@ -69,6 +78,12 @@ function leadslide_delete_leadslide_template() {
 }
 
 function leadslide_install_leadslide_template() {
+    if (isset($_POST['action']) && $_POST['action'] === 'install_leadslide_template') {
+        if (!isset($_POST['leadslide-install-template-nonce']) || !check_admin_referer('leadslide-install-template-action', 'leadslide-install-template-nonce')) {
+            wp_die('Security check failed');
+        }
+    }
+
     global $LS_PAGE_TEMPLATE_PATH;
     $action_posted = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
 

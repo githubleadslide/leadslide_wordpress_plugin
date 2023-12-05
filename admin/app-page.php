@@ -3,12 +3,17 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
+function leadsldie_valid_api_key_format($api_key) {
+    $pattern = '/^[a-zA-Z0-9]+\.[a-zA-Z0-9]+$/';
+    return preg_match($pattern, $api_key) === 1;
+}
+
 function leadslide_app_page() {
     global $BASE_LS_API_URL, $BASE_LEADSLIDE_WP_URL;
     $options = get_option('leadslide_options');
     $api_key = $options['leadslide_api_key'];
 
-    if (empty($api_key)) {
+    if (empty($api_key) || !leadsldie_valid_api_key_format($api_key)) {
         echo '<p>Please enter your API key. <a href="options-general.php?page=leadslide-api-key-iframe-loader">Go to settings page</a></p>';
     } else {
         $options = [
