@@ -1,7 +1,7 @@
 jQuery(document).ready(function($) {
     $('.manage-campaign-button').click(function() {
         var action = $(this).data('action');
-        console.log(action);
+
         if(action === 'edit') {
             var editLink = $(this).data('edit-link');
             console.log(editLink);
@@ -17,6 +17,7 @@ jQuery(document).ready(function($) {
         var data = {
             'is_new': false,
             'action': 'leadslide_manage_campaign',
+            'nonce': leadslide_ajax.nonce,
             'page_id': $(this).data('page-id'),
             'campaign_action': $(this).data('action')
         };
@@ -30,6 +31,7 @@ jQuery(document).ready(function($) {
         var data = {
             'is_new': true,
             'action': 'leadslide_manage_campaign',
+            'nonce': leadslide_ajax.nonce,
             'campaign_name': $(this).data('campaign-name'),
             'campaign_url': $(this).data('campaign-url'),
             'campaign_id': $(this).data('campaign-id'),

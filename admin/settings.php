@@ -6,7 +6,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 add_action('admin_init', 'leadslide_delete_leadslide_template');
 add_action('admin_init', 'leadslide_install_leadslide_template');
 
-// The leadslide_settings_page() function will go here
 function leadslide_settings_page() {
     $theme_dir = get_template_directory();
     $template_file = $theme_dir . '/leadslide-page-template.php';
@@ -14,22 +13,26 @@ function leadslide_settings_page() {
     <div class="wrap">
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
 
+        <?php settings_errors(); ?>
+
         <form action="options.php" method="post">
             <?php
             settings_fields('leadslide_options');
-            do_settings_sections('leadslide-api-key-iframe-loader');
+            do_settings_sections('leadslide-settings');
+            wp_nonce_field('leadslide-settings-save', 'leadslide-settings-nonce');
             submit_button('Save Changes');
             ?>
         </form>
 
-        <!-- Adding a new section -->
         <?php if (!file_exists($template_file)) : ?>
             <form action="" method="post">
+                <?php wp_nonce_field('leadslide-install-template-action', 'leadslide-install-template-nonce'); ?>
                 <input type="hidden" name="action" value="install_leadslide_template">
                 <?php submit_button('Install Leadslide Page Template'); ?>
             </form>
         <?php else : ?>
             <form action="" method="post">
+                <?php wp_nonce_field('leadslide-delete-template-action', 'leadslide-delete-template-nonce'); ?>
                 <input type="hidden" name="action" value="delete_leadslide_template">
                 <?php submit_button('Delete Leadslide Page Template'); ?>
             </form>
@@ -39,6 +42,12 @@ function leadslide_settings_page() {
     <?php
 }
 function leadslide_delete_leadslide_template() {
+    if (isset($_POST['action']) && $_POST['action'] === 'delete_leadslide_template') {
+        if (!isset($_POST['leadslide-delete-template-nonce']) || !check_admin_referer('leadslide-delete-template-action', 'leadslide-delete-template-nonce')) {
+            wp_die('Security check failed Error L46.');
+        }
+    }
+
     global $LS_PAGE_TEMPLATE_PATH;
     $action_posted = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
 
@@ -69,6 +78,12 @@ function leadslide_delete_leadslide_template() {
 }
 
 function leadslide_install_leadslide_template() {
+    if (isset($_POST['action']) && $_POST['action'] === 'install_leadslide_template') {
+        if (!isset($_POST['leadslide-install-template-nonce']) || !check_admin_referer('leadslide-install-template-action', 'leadslide-install-template-nonce')) {
+            wp_die('Security check failed');
+        }
+    }
+
     global $LS_PAGE_TEMPLATE_PATH;
     $action_posted = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
 
@@ -107,14 +122,23 @@ function leadslide_install_leadslide_template() {
 add_action('admin_init', 'leadslide_register_settings');
 function leadslide_register_settings() {
     register_setting('leadslide_options', 'leadslide_options', 'leadslide_sanitize_options');
-    add_settings_section('leadslide_settings', 'Settings', null, 'leadslide-api-key-iframe-loader');
-    add_settings_field('leadslide_api_key', 'API Key', 'leadslide_api_key_field', 'leadslide-api-key-iframe-loader', 'leadslide_settings');
+    add_settings_section('leadslide_settings', 'API Settings', null, 'leadslide-settings');
+    add_settings_field('leadslide_api_key', 'API Key', 'leadslide_api_key_field', 'leadslide-settings', 'leadslide_settings');
 }
 
 // The leadslide_sanitize_options() function will go here
 function leadslide_sanitize_options($options) {
+    if (!isset($_POST['leadslide-settings-nonce']) || !wp_verify_nonce($_POST['leadslide-settings-nonce'], 'leadslide-settings-save')) {
+        add_settings_error('leadslide_options', 'invalid_nonce', 'Security check failed.', 'error');
+        return get_option('leadslide_options');
+    }
+
     $sanitized_options = array();
     $sanitized_options['leadslide_api_key'] = sanitize_text_field($options['leadslide_api_key']);
+
+    add_settings_error('leadslide_options', 'settings_updated', 'Settings saved successfully.', 'updated');
+
+
     return $sanitized_options;
 }
 
