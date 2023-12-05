@@ -101,7 +101,7 @@ function leadslide_publish_campaign() {
     $api_key = $options['leadslide_api_key'];
 
     if (empty($api_key)) {
-        echo '<p>Please enter your API key. <a href="options-general.php?page=leadslide-api-key-iframe-loader">Go to settings page</a></p>';
+        echo '<p>Please enter your API key. <a href="' . esc_url(admin_url('admin.php?page=leadslide-settings')) . '">Go to settings page</a></p>';
     } else {
         $options = [
             'headers' => array('Content-Type' => 'application/json; charset=utf-8'),
@@ -202,7 +202,7 @@ function leadslide_publish_campaign() {
                 echo '</table>';
             } else {
                 if (isset($data['detail']) && $data['detail'] === 'Invalid API Key Pre') {
-                    echo '<p>Please enter your API key. <a href="options-general.php?page=leadslide-api-key-iframe-loader">Go to settings page</a></p>';
+                    echo '<p>Please enter your API key. <a href="' . esc_url(admin_url('admin.php?page=leadslide-settings')) . '">Go to settings page</a></p>';
                 } else {
                     echo '<p>Error: Unexpected response from the API. Please contact support@leadslide.com</p>';
                 }
