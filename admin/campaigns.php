@@ -155,6 +155,10 @@ function leadslide_publish_campaign() {
                         cursor: pointer;
                     }
                 </style>';
+                echo '<h1>Campaigns</h1>';
+                echo '<p>This is the campaigns page where you can activate published campaigns.</p>';
+
+                echo '<p>To manage or edit pages and campaigns, please do so through <a href="https://www.leadslide.com" target="_blank">leadslide.com</a>.</p>';
 
                 // Generate the list
                 echo '<table>';
