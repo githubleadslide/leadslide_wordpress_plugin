@@ -34,7 +34,7 @@ function leadslide_manage_campaign() {
     {
         wp_die(__('Nonce verification failed.'));
     }
-    // escape $_POST['is_new'] as boolean
+  
     $is_new = filter_var( isset($_POST['is_new']) ? $_POST['is_new'] : false, FILTER_VALIDATE_BOOLEAN );
 
     if($is_new === true || $is_new === 'true')
