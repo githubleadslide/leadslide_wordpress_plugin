@@ -30,7 +30,11 @@ function leadslide_admin_notice() {
 }
 
 function leadslide_manage_campaign() {
-    check_ajax_referer('leadslide_ajax_nonce', 'nonce');
+    if(!check_ajax_referer('leadslide_ajax_nonce', 'nonce') || !current_user_can('manage_options'))
+    {
+        wp_die(__('Nonce verification failed.'));
+    }
+    // escape $_POST['is_new'] as boolean
     $is_new = filter_var( isset($_POST['is_new']) ? $_POST['is_new'] : false, FILTER_VALIDATE_BOOLEAN );
 
     if($is_new === true || $is_new === 'true')
@@ -99,6 +103,11 @@ function leadslide_publish_campaign() {
     global $BASE_LS_API_URL;
     $options = get_option('leadslide_options');
     $api_key = $options['leadslide_api_key'];
+    // check current user has permissions
+    if(!current_user_can('manage_options'))
+    {
+        wp_die(__('You do not have sufficient permissions to access this page.'));
+    }
 
     if (empty($api_key)) {
         echo '<p>Please enter your API key. <a href="' . esc_url(admin_url('admin.php?page=leadslide-settings')) . '">Go to settings page</a></p>';

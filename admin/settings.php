@@ -41,11 +41,27 @@ function leadslide_settings_page() {
     </div>
     <?php
 }
+
+function leadslide_auth_user($user_can='manage_options', $action, $nonce_field, $ajax=false) {
+    if (!current_user_can($user_can)) {
+        wp_die(__('You do not have sufficient permissions to access this page.'));
+    }
+
+    if($ajax)
+    {
+        if(!check_ajax_referer($action, $nonce_field, false))
+        {
+            wp_die(__('Nonce verification failed.'));
+        }
+    } else {
+        if (!isset($_POST[$nonce_field]) || !check_admin_referer($action, $nonce_field)) {
+            wp_die(__('Nonce verification failed.', 'leadslide-text-domain'));
+        }
+    }
+}
 function leadslide_delete_leadslide_template() {
     if (isset($_POST['action']) && $_POST['action'] === 'delete_leadslide_template') {
-        if (!isset($_POST['leadslide-delete-template-nonce']) || !check_admin_referer('leadslide-delete-template-action', 'leadslide-delete-template-nonce')) {
-            wp_die('Security check failed Error L46.');
-        }
+        leadslide_auth_user('manage_options', 'leadslide-delete-template-action', 'leadslide-delete-template-nonce');
     }
 
     global $LS_PAGE_TEMPLATE_PATH;
@@ -79,9 +95,7 @@ function leadslide_delete_leadslide_template() {
 
 function leadslide_install_leadslide_template() {
     if (isset($_POST['action']) && $_POST['action'] === 'install_leadslide_template') {
-        if (!isset($_POST['leadslide-install-template-nonce']) || !check_admin_referer('leadslide-install-template-action', 'leadslide-install-template-nonce')) {
-            wp_die('Security check failed');
-        }
+        leadslide_auth_user('manage_options', 'leadslide-install-template-action', 'leadslide-install-template-nonce');
     }
 
     global $LS_PAGE_TEMPLATE_PATH;
