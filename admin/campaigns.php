@@ -37,18 +37,19 @@ function leadslide_admin_notice() {
 }
 
 function leadslide_manage_campaign() {
+
     /**
      * Allows the user to manage their campaigns.
      * They can piublish, unpublish and delete campaigns.
      * To edit a campaign the user must login to https://ai.leadslide.com
      */
 
+
     if(!check_ajax_referer('leadslide_ajax_nonce', 'nonce') || !current_user_can('manage_options'))
     {
         wp_die(__('Nonce verification failed.'));
     }
-
-    // escape $_POST['is_new'] as boolean
+    // Force a boolean
     $is_new = filter_var( isset($_POST['is_new']) ? $_POST['is_new'] : false, FILTER_VALIDATE_BOOLEAN );
 
     if($is_new === true || $is_new === 'true')
