@@ -7,11 +7,29 @@ add_action('admin_init', 'leadslide_delete_leadslide_template');
 add_action('admin_init', 'leadslide_install_leadslide_template');
 
 function leadslide_settings_page() {
+    /**
+     * The settings page will allow the user to enter their API key and save it.
+     * The settings page will also allow the user to install the Leadslide page template.
+     */
     $theme_dir = get_template_directory();
     $template_file = $theme_dir . '/leadslide-page-template.php';
     ?>
     <div class="wrap">
         <h1><?php echo esc_html(get_admin_page_title()); ?></h1>
+        <p>
+            This plugin integrates your WordPress site with Leadslide, allowing you to manage and publish campaigns
+            directly from your dashboard. It connects to ai.leadslide.com, using your unique API key, to fetch campaign
+            information. Enter your API key below to enable seamless synchronization between Leadslide and your site,
+            ensuring efficient campaign management and publication.
+        </p>
+
+        <p>
+            The API key is a crucial element of the Leadslide integration. It serves as a unique identifier that grants
+            your WordPress site access to your Leadslide account. By entering your API key here, you enable the plugin
+            to securely communicate with ai.leadslide.com. This communication allows the plugin to retrieve your
+            campaign data and manage publications directly from your WordPress dashboard. Be sure to input your correct
+            Leadslide API key to ensure seamless integration and functionality.
+        </p>
 
         <?php settings_errors(); ?>
 
@@ -25,6 +43,9 @@ function leadslide_settings_page() {
         </form>
 
         <?php if (!file_exists($template_file)) : ?>
+            <p>
+                The 'Install Leadslide Page Template' button allows you to add a custom page template to your theme. This template is designed specifically for displaying Leadslide campaigns on your site. Clicking this button will automatically copy the necessary template file into your current theme's directory, enabling you to select it when creating or editing pages. This ensures that your campaigns are displayed optimally, utilizing Leadslide's tailored layout and design.
+            </p>
             <form action="" method="post">
                 <?php wp_nonce_field('leadslide-install-template-action', 'leadslide-install-template-nonce'); ?>
                 <input type="hidden" name="action" value="install_leadslide_template">
@@ -43,6 +64,9 @@ function leadslide_settings_page() {
 }
 
 function leadslide_auth_user($user_can='manage_options', $action, $nonce_field, $ajax=false) {
+    /**
+     * This function will check if the user is authorized to perform the action.
+     */
     if (!current_user_can($user_can)) {
         wp_die(__('You do not have sufficient permissions to access this page.'));
     }
@@ -60,6 +84,9 @@ function leadslide_auth_user($user_can='manage_options', $action, $nonce_field, 
     }
 }
 function leadslide_delete_leadslide_template() {
+    /**
+     * This function will delete the Leadslide page template from the theme directory.
+     */
     if (isset($_POST['action']) && $_POST['action'] === 'delete_leadslide_template') {
         leadslide_auth_user('manage_options', 'leadslide-delete-template-action', 'leadslide-delete-template-nonce');
     }
@@ -94,6 +121,9 @@ function leadslide_delete_leadslide_template() {
 }
 
 function leadslide_install_leadslide_template() {
+    /**
+     * This function will install the Leadslide page template in the theme directory.
+     */
     if (isset($_POST['action']) && $_POST['action'] === 'install_leadslide_template') {
         leadslide_auth_user('manage_options', 'leadslide-install-template-action', 'leadslide-install-template-nonce');
     }
@@ -142,6 +172,9 @@ function leadslide_register_settings() {
 
 // The leadslide_sanitize_options() function will go here
 function leadslide_sanitize_options($options) {
+    /**
+     * This function will sanitize the options entered by the user.
+     */
     if (!isset($_POST['leadslide-settings-nonce']) || !wp_verify_nonce($_POST['leadslide-settings-nonce'], 'leadslide-settings-save')) {
         add_settings_error('leadslide_options', 'invalid_nonce', 'Security check failed.', 'error');
         return get_option('leadslide_options');
@@ -156,8 +189,10 @@ function leadslide_sanitize_options($options) {
     return $sanitized_options;
 }
 
-// The leadslide_api_key_field() function will go here
 function leadslide_api_key_field() {
+    /**
+     * This function will display the API key field on the settings page.
+     */
     $options = get_option('leadslide_options');
     echo '<input type="text" id="leadslide_api_key" name="leadslide_options[leadslide_api_key]" value="' . esc_attr($options['leadslide_api_key']) . '">';
 }

@@ -10,6 +10,10 @@ add_action('wp_ajax_leadslide_manage_campaign', 'leadslide_manage_campaign');
 add_action('admin_notices', 'leadslide_admin_notice');
 
 function leadslide_campaign_scripts() {
+    /**
+     * Add the leadslide ajax script which adds click events to the add campaigns activate and disable buttons
+     * The javascript can be found in assets/js/campaigns.js
+     */
     wp_enqueue_script('leadslide-admin', plugins_url('assets/js/campaigns.js', __FILE__), array('jquery'), '1.0.2', true);
 
     // pass Ajax Url to script.js
@@ -20,6 +24,9 @@ function leadslide_campaign_scripts() {
 }
 
 function leadslide_admin_notice() {
+    /**
+     * Check transient, if available display notice
+     */
     if ($message = get_transient('leadslide_admin_notice')) {
         ?>
         <div class="notice notice-success is-dismissible">
@@ -30,6 +37,11 @@ function leadslide_admin_notice() {
 }
 
 function leadslide_manage_campaign() {
+    /**
+     * Allows the user to manage their campaigns.
+     * They can piublish, unpublish and delete campaigns.
+     * To edit a campaign the user must login to https://ai.leadslide.com
+     */
     if(!check_ajax_referer('leadslide_ajax_nonce', 'nonce') || !current_user_can('manage_options'))
     {
         wp_die(__('Nonce verification failed.'));
@@ -100,6 +112,11 @@ function leadslide_manage_campaign() {
 }
 
 function leadslide_publish_campaign() {
+    /**
+     * Publishes a campaign by creating a new page in WordPress.
+     * The page template is set to the LeadSlide page template.
+     * The campaign_id and publish_api_key are stored as page meta.
+     */
     global $BASE_LS_API_URL;
     $options = get_option('leadslide_options');
     $api_key = $options['leadslide_api_key'];
