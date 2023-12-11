@@ -11,7 +11,13 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 global $BASE_LS_API_URL, $BASE_LS_VIEW_URL,$LS_PAGE_TEMPLATE_PATH,$BASE_LEADSLIDE_WP_URL ;
-
+/**
+ * Define constants
+ * $BASE_LS_API_URL is the base URL for the LeadSlide API and only the initial part.
+ * $BASE_LS_VIEW_URL is the base URL for the LeadSlide campaign view and only the initial part.
+ * $LS_PAGE_TEMPLATE_PATH is the path to the LeadSlide page template.
+ * $BASE_LEADSLIDE_WP_URL is the base URL for the WordPress site.
+ */
 $BASE_LS_API_URL = 'https://ai.leadslide.com/api/basic/wp/';
 $BASE_LEADSLIDE_VIEW_URL  = 'https://ai.leadslide.com/campaign/cp/';
 $BASE_LEADSLIDE_WP_URL = get_site_url();
