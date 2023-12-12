@@ -18,7 +18,7 @@ With LeadSlide's Ebook Creator and Email Funnel plugin for WordPress, you can:
 2. Build a full funnel with landing page, email optin, follow-up emails, and Ebook downloads.
 3. Grow your audience with our easy-to-use, AI-powered tools.
 
-This plugin requires a subscription to Leadslide from Leadslide.com
+This plugin requires a 14 day free trial from https://LeadSlide.com to connect to your Wordpress website, to use and publish campaigns, and create Ebooks. Also, our privacy policy can be found here.  https://leadslide.com/privacy-policy  More detailed information can be found in the FAQ below.
 
 To publish an Ebook and Funnel to your WordPress website:
 
@@ -52,11 +52,11 @@ Installation and usage tutorial.   https://leadslide.com/wordpress-install
 
 OR
 
-1. Create a Wordpress domain in [LeadSlide](http://leadslide.com/ "Leadslide AI Ebook Creator and Marketing Opt-in Email Funnels")
+1. Create a Wordpress domain in [LeadSlide](https://leadslide.com/ "Leadslide AI Ebook Creator and Marketing Opt-in Email Funnels")
 1. Upload the zip file via the 'Plugins' menu in WordPress
 1. Activate this plugin after installation completes
 
-If you encounter any issues during installation, please contact our support team at [email support link].
+If you encounter any issues during installation, please contact our support team at [https://leadslide.com/contact].
 
 == Frequently Asked Questions ==
 
