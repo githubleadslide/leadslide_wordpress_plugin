@@ -50,7 +50,7 @@ function leadslide_manage_campaign() {
         wp_die(__('Nonce verification failed.'));
     }
     // Force a boolean
-    $is_new = filter_var( isset($_POST['is_new']) ? $_POST['is_new'] : false, FILTER_VALIDATE_BOOLEAN );
+    $is_new = filter_var( isset($_POST['is_new']) ? sanitize_text_field($_POST['is_new']) : false, FILTER_VALIDATE_BOOLEAN );
 
     if($is_new === true || $is_new === 'true')
     {
@@ -221,8 +221,8 @@ function leadslide_publish_campaign() {
                         } else {
                             $page_id = esc_attr($page->ID);
                             $edit_link = get_edit_post_link($page_id);
-                            echo '<button class="manage-campaign-button" data-page-id="'.esc_attr($page->ID).'" data-action="'.esc_attr($buttonAction).'">'. $buttonText .'</button>';
-                            echo '<button style="margin-left:15px;" class="manage-campaign-button" data-edit-link="'.$edit_link.'" data-page-id="'.esc_attr($page->ID).'" data-action="'.esc_attr('edit').'">Edit Page</button>';
+                            echo '<button class="manage-campaign-button" data-page-id="'.esc_attr($page->ID).'" data-action="'.esc_attr($buttonAction).'">'. esc_html($buttonText) .'</button>';
+                            echo '<button style="margin-left:15px;" class="manage-campaign-button" data-edit-link="'.esc_url($edit_link).'" data-page-id="'.esc_attr($page->ID).'" data-action="'.esc_attr('edit').'">Edit Page</button>';
                             echo '<button style="margin-left:15px;" class="manage-campaign-button" data-page-id="'.esc_attr($page->ID).'" data-action="'.esc_attr('delete').'">Delete Page</button>';
 
                         }

@@ -90,7 +90,7 @@ function leadslide_delete_leadslide_template() {
      * This function will delete the Leadslide page template from the theme directory.
      */
 
-    if (isset($_POST['action']) && $_POST['action'] === 'delete_leadslide_template') {
+    if (isset($_POST['action']) && sanitize_text_field($_POST['action']) === 'delete_leadslide_template') {
         leadslide_auth_user('manage_options', 'leadslide-delete-template-action', 'leadslide-delete-template-nonce');
     }
 
@@ -115,7 +115,7 @@ function leadslide_delete_leadslide_template() {
          * get_settings_errors is used to retrieve the errors from the transient and display them
          * Both of these functions are WP functions.
          */
-        set_transient('settings_errors', get_settings_errors(), 30);
+        set_transient('leadslide_settings_errors', get_settings_errors(), 30);
 
         $goback = add_query_arg('settings-updated', 'true', wp_get_referer());
         wp_redirect($goback);
@@ -128,7 +128,7 @@ function leadslide_install_leadslide_template() {
      * This function will install the Leadslide page template in the theme directory.
      */
 
-    if (isset($_POST['action']) && $_POST['action'] === 'install_leadslide_template') {
+    if (isset($_POST['action']) && sanitize_text_field($_POST['action']) === 'install_leadslide_template') {
         leadslide_auth_user('manage_options', 'leadslide-install-template-action', 'leadslide-install-template-nonce');
     }
 
@@ -158,7 +158,7 @@ function leadslide_install_leadslide_template() {
          * get_settings_errors is used to retrieve the errors from the transient and display them
          * Both of these functions are WP functions.
          */
-        set_transient('settings_errors', get_settings_errors(), 30);
+        set_transient('leadslide_settings_errors', get_settings_errors(), 30);
 
         $goback = add_query_arg('settings-updated', 'true', wp_get_referer());
         wp_redirect($goback);
@@ -180,7 +180,7 @@ function leadslide_sanitize_options($options) {
      * This function will sanitize the options entered by the user.
      */
 
-    if (!isset($_POST['leadslide-settings-nonce']) || !wp_verify_nonce($_POST['leadslide-settings-nonce'], 'leadslide-settings-save')) {
+    if (!isset($_POST['leadslide-settings-nonce']) || !wp_verify_nonce(sanitize_text_field($_POST['leadslide-settings-nonce']), 'leadslide-settings-save')) {
         add_settings_error('leadslide_options', 'invalid_nonce', 'Security check failed.', 'error');
         return get_option('leadslide_options');
     }
