@@ -43,6 +43,15 @@ function leadslide_settings_page() {
             Use the new "Leadslide Campaigns" custom post type to manage your campaigns. You can add new campaigns, edit existing ones, and manage all your content directly through this custom post type.
         </p>
 
+        <h2>
+            Warning**
+        </h2>
+
+        <p>
+            Leadslide is set to work with the permalink set to postname. If the structure is not set to postname the page
+            campaign will not load correctly.
+        </p>
+
     </div>
     <?php
 }

@@ -22,10 +22,12 @@ if (empty($leadslide_campaign_id) || empty($leadslide_publish_api_key)) {
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body {
+        html, body {
+            height: 100%;
             margin: 0;
             padding: 0;
         }
+
         #leadslidePageFrame {
             width: 100%;
             height: 100%;
