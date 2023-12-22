@@ -44,13 +44,18 @@ function leadslide_settings_page() {
         </p>
 
         <h2>
-            Warning**
+            My Page shows error #404
         </h2>
 
         <p>
-            Leadslide is set to work with the permalink set to postname. If the structure is not set to postname the page
-            campaign will not load correctly.
+            If your page shows a 404 error, it could be because the perma link is cached. In the WordPress admin, hover over
+            settings and select permalinks. Once on the page click save, this will refresh the cache.
         </p>
+
+        <p>
+            If you still get the 404 error check your campaign is not set to draft. (Draft posts will show as 404 when you're not logged in.)
+        </p>
+
 
     </div>
     <?php

@@ -198,7 +198,7 @@ function leadslide_publish_campaign() {
                 echo '<td style="text-align: center;">' . esc_html($item['id']) . '</td>';
                 echo '<td>' . esc_html($item['campaign_name']) . '</td>';
 
-                echo '<td><a target="_blank" href="/' . esc_html($item['url']) . '">' . esc_html($item['url']) . '</a></td>';
+                echo '<td><a target="_blank" href="/campaign/' . esc_html($item['url']) . '">' . esc_html($item['url']) . '</a></td>';
 
                 echo '<td>';
 
@@ -267,7 +267,7 @@ function leadslide_create_custom_post_type() {
             'public'      => true,
             'has_archive' => true,
             'supports'    => array('title', 'editor', 'thumbnail'),
-            'rewrite'     => array('slug' => 'leadslide-campaigns')
+            'rewrite'     => array('slug' => 'campaign')
         )
     );
 }
