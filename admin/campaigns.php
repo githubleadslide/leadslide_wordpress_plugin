@@ -8,6 +8,7 @@ add_action('wp_ajax_leadslide_add_campaign', 'leadslide_add_campaign');
 add_action('admin_enqueue_scripts', 'leadslide_campaign_scripts');
 add_action('wp_ajax_leadslide_manage_campaign', 'leadslide_manage_campaign');
 add_action('admin_notices', 'leadslide_admin_notice');
+add_action('init', 'leadslide_create_custom_post_type');
 
 function leadslide_campaign_scripts() {
     /**
@@ -37,72 +38,70 @@ function leadslide_admin_notice() {
 }
 
 function leadslide_manage_campaign() {
-
     /**
      * Allows the user to manage their campaigns.
-     * They can piublish, unpublish and delete campaigns.
+     * They can publish, unpublish and delete campaigns.
      * To edit a campaign the user must login to https://ai.leadslide.com
      */
 
-
-    if(!check_ajax_referer('leadslide_ajax_nonce', 'nonce') || !current_user_can('manage_options'))
-    {
+    // Check for nonce and user permissions
+    if (!check_ajax_referer('leadslide_ajax_nonce', 'nonce') || !current_user_can('manage_options')) {
         wp_die(__('Nonce verification failed.'));
     }
-    // Force a boolean
-    $is_new = filter_var( isset($_POST['is_new']) ? sanitize_text_field($_POST['is_new']) : false, FILTER_VALIDATE_BOOLEAN );
 
-    if($is_new === true || $is_new === 'true')
-    {
+    // Force a boolean
+    $is_new = filter_var(isset($_POST['is_new']) ? sanitize_text_field($_POST['is_new']) : false, FILTER_VALIDATE_BOOLEAN);
+
+    if ($is_new === true || $is_new === 'true') {
         $campaign_name = sanitize_text_field($_POST['campaign_name']);
         $campaign_id = sanitize_text_field($_POST['campaign_id']);
         $publish_api_key = sanitize_text_field($_POST['publish_api_key']);
         $campaign_url = sanitize_text_field($_POST['campaign_url']);
 
+        // Use custom post type 'leadslide_campaign'
         $post_name = sanitize_title($campaign_url);
-        // If a page with this URL already exists, append a random number
-        if (get_page_by_path($post_name)) {
+        if (get_page_by_path($post_name, OBJECT, 'leadslide_campaign')) {
             set_transient('leadslide_admin_notice', 'An error occurred.', 60);
             echo "Error";
             wp_die();
         }
 
-        $page = array(
+        $post = array(
             'post_title'    => $campaign_name,
             'post_name'     => $post_name,
             'post_status'   => 'publish',
-            'post_type'     => 'page',
-            'page_template' => 'leadslide-page-template.php'
+            'post_type'     => 'leadslide_campaign',
         );
 
-        $page_id = wp_insert_post($page);
+        $post_id = wp_insert_post($post);
 
-        if ($page_id != 0) {
-            update_post_meta($page_id, 'campaign_id', $campaign_id);
-            update_post_meta($page_id, 'publish_api_key', $publish_api_key);
+        if ($post_id != 0) {
+            update_post_meta($post_id, 'campaign_id', $campaign_id);
+            update_post_meta($post_id, 'publish_api_key', $publish_api_key);
             set_transient('leadslide_admin_notice', 'Campaign published successfully.', 60);
         } else {
             set_transient('leadslide_admin_notice', 'An error occurred.', 60);
         }
 
-        echo $page_id ? 'success' : 'error';
+        echo $post_id ? 'success' : 'error';
         wp_die();
     }
-    $page_id = sanitize_text_field($_POST['page_id']);
+
+    $post_id = sanitize_text_field($_POST['page_id']);
     $action = sanitize_text_field($_POST['campaign_action']);
-    if($action === 'delete') {
-        // delete wordpress page
-        $deleted = wp_delete_post($page_id, true);
+    if ($action === 'delete') {
+        // delete the custom post type post
+        $deleted = wp_delete_post($post_id, true);
         echo $deleted ? 'success' : 'error';
     } else {
         $post_status = $action == 'publish' ? 'publish' : 'draft';
-        $page = array(
-            'ID' => $page_id,
+        $post = array(
+            'ID' => $post_id,
             'post_status' => $post_status
         );
 
-        $updated = wp_update_post($page);
-        if($updated) {
+        $updated = wp_update_post($post);
+        if ($updated) {
             set_transient('leadslide_admin_notice', 'Campaign status changed successfully.', 60);
         } else {
             set_transient('leadslide_admin_notice', 'An error occurred.', 60);
@@ -111,8 +110,8 @@ function leadslide_manage_campaign() {
         echo $updated ? 'success' : 'error';
     }
     wp_die();
-
 }
+
 
 function leadslide_publish_campaign() {
     /**
@@ -131,21 +130,23 @@ function leadslide_publish_campaign() {
 
     if (empty($api_key)) {
         echo '<p>Please enter your API key. <a href="' . esc_url(admin_url('admin.php?page=leadslide-settings')) . '">Go to settings page</a></p>';
+        return;
+    }
+
+    $options = [
+        'headers' => array('Content-Type' => 'application/json; charset=utf-8'),
+        'body' => json_encode(['api_key' => $api_key])
+    ];
+
+    $response = wp_remote_post($BASE_LS_API_URL.'published-wp-campaigns', $options);
+
+    if (is_wp_error($response)) {
+        echo '<p>Error: ' . esc_html($response->get_error_message()) . '</p>';
     } else {
-        $options = [
-            'headers' => array('Content-Type' => 'application/json; charset=utf-8'),
-            'body' => json_encode(['api_key' => $api_key])
-        ];
-
-        $response = wp_remote_post($BASE_LS_API_URL.'published-wp-campaigns', $options);
-
-        if (is_wp_error($response)) {
-            echo '<p>Error: ' . esc_html($response->get_error_message()) . '</p>';
-        } else {
-            $data = json_decode($response['body'], true);
-            if (isset($data['data'])) {
-                // Add CSS styles inline
-                echo '<style>
+        $data = json_decode($response['body'], true);
+        if (isset($data['data'])) {
+            // Add CSS styles inline
+            echo '<style>
                     /* Add spacing and match WordPress admin design */
                     table {
                         width: 80%;
@@ -184,62 +185,138 @@ function leadslide_publish_campaign() {
                         cursor: pointer;
                     }
                 </style>';
-                echo '<h1>Campaigns</h1>';
-                echo '<p>This is the campaigns page where you can activate published campaigns.</p>';
+            echo '<h1>Campaigns</h1>';
+            echo '<p>This is the campaigns page where you can activate published campaigns.</p>';
 
-                echo '<p>To manage or edit pages and campaigns, please do so through <a href="https://www.leadslide.com" target="_blank">leadslide.com</a>.</p>';
+            echo '<p>To manage or edit pages and campaigns, please do so through <a href="https://www.leadslide.com" target="_blank">leadslide.com</a>.</p>';
 
-                // Generate the list
-                echo '<table>';
-                echo '<tr><th>ID</th><th>Name</th><th>URL</th><th>Actions</th></tr>';
-                foreach ($data['data'] as $item) {
-                    echo '<tr>';
-                    echo '<td style="text-align: center;">' . esc_html($item['id']) . '</td>';
-                    echo '<td>' . esc_html($item['campaign_name']) . '</td>';
+            // Generate the list
+            echo '<table>';
+            echo '<tr><th>ID</th><th>Name</th><th>URL</th><th>Actions</th></tr>';
+            foreach ($data['data'] as $item) {
+                echo '<tr>';
+                echo '<td style="text-align: center;">' . esc_html($item['id']) . '</td>';
+                echo '<td>' . esc_html($item['campaign_name']) . '</td>';
 
-                    echo '<td><a target="_blank" href="/' . esc_html($item['url']) . '">' . esc_html($item['url']) . '</a></td>';
+                echo '<td><a target="_blank" href="/' . esc_html($item['url']) . '">' . esc_html($item['url']) . '</a></td>';
 
-                    echo '<td>';
-                    $page = get_page_by_path($item['url'], OBJECT, 'page');
+                echo '<td>';
 
-                    if ($page) {
-                        $buttonText = '';
-                        $buttonAction = '';
-                        if ($page->post_status == 'publish') {
-                            $buttonText = 'Disable Campaign';
-                            $buttonAction = 'disable';
-                        } else if ($page->post_status == 'draft') {
-                            $buttonText = 'Enable Campaign';
-                            $buttonAction = 'publish';
-                        }
+                $post = get_page_by_path($item['url'], OBJECT, 'leadslide_campaign');
 
-                        // check page contains page meta campaign_id
-                        $campaign_id = get_post_meta($page->ID, 'campaign_id', true);
-                        // if not return error
-                        if (empty($campaign_id)) {
-                            echo '<button disabled>Page Exists</button>';
-                        } else {
-                            $page_id = esc_attr($page->ID);
-                            $edit_link = get_edit_post_link($page_id);
-                            echo '<button class="manage-campaign-button" data-page-id="'.esc_attr($page->ID).'" data-action="'.esc_attr($buttonAction).'">'. esc_html($buttonText) .'</button>';
-                            echo '<button style="margin-left:15px;" class="manage-campaign-button" data-edit-link="'.esc_url($edit_link).'" data-page-id="'.esc_attr($page->ID).'" data-action="'.esc_attr('edit').'">Edit Page</button>';
-                            echo '<button style="margin-left:15px;" class="manage-campaign-button" data-page-id="'.esc_attr($page->ID).'" data-action="'.esc_attr('delete').'">Delete Page</button>';
-
-                        }
-                    } else {
-                        echo '<button class="add-campaign-button" data-campaign-url="'.esc_attr($item['url']).'" data-campaign-name="'.esc_attr($item['campaign_name']).'" data-campaign-id="'.esc_attr($item['public_id']).'" data-publish-api-key="'.esc_attr($item['publish_api_key']).'">Add Campaign</button>';
+                if ($post) {
+                    $buttonText = '';
+                    $buttonAction = '';
+                    if ($post->post_status == 'publish') {
+                        $buttonText = 'Disable Campaign';
+                        $buttonAction = 'disable';
+                    } else if ($post->post_status == 'draft') {
+                        $buttonText = 'Enable Campaign';
+                        $buttonAction = 'publish';
                     }
-                    echo '</td>';
-                    echo '</tr>';
-                }
-                echo '</table>';
-            } else {
-                if (isset($data['detail']) && $data['detail'] === 'Invalid API Key Pre') {
-                    echo '<p>Please enter your API key. <a href="' . esc_url(admin_url('admin.php?page=leadslide-settings')) . '">Go to settings page</a></p>';
+
+                    // check page contains page meta campaign_id
+                    $campaign_id = get_post_meta($post->ID, 'campaign_id', true);
+                    // if not return error
+                    if (empty($campaign_id)) {
+                        echo '<button disabled>Page Exists</button>';
+                    } else {
+                        $page_id = esc_attr($post->ID);
+                        $edit_link = get_edit_post_link($page_id);
+                        echo '<button class="manage-campaign-button" data-page-id="'.esc_attr($post->ID).'" data-action="'.esc_attr($buttonAction).'">'. esc_html($buttonText) .'</button>';
+                        echo '<button style="margin-left:15px;" class="manage-campaign-button" data-edit-link="'.esc_url($edit_link).'" data-page-id="'.esc_attr($post->ID).'" data-action="'.esc_attr('edit').'">Edit Page</button>';
+                        echo '<button style="margin-left:15px;" class="manage-campaign-button" data-page-id="'.esc_attr($post->ID).'" data-action="'.esc_attr('delete').'">Delete Page</button>';
+
+                    }
                 } else {
-                    echo '<p>Error: Unexpected response from the API. Please contact support@leadslide.com</p>';
+                    echo '<button class="add-campaign-button" data-campaign-url="'.esc_attr($item['url']).'" data-campaign-name="'.esc_attr($item['campaign_name']).'" data-campaign-id="'.esc_attr($item['public_id']).'" data-publish-api-key="'.esc_attr($item['publish_api_key']).'">Add Campaign</button>';
                 }
+                echo '</td>';
+                echo '</tr>';
+            }
+            echo '</table>';
+        } else {
+            if (isset($data['detail']) && $data['detail'] === 'Invalid API Key Pre') {
+                echo '<p>The API Key you have entered is invalid. Please login to <a target="_blank" href="https://ai.leadslide.com/login">LeadSlide</a> click settings and generate a new api key.</p>';
+            } else {
+                echo '<p>Error: Unexpected response from the API. Please contact support@leadslide.com</p>';
             }
         }
     }
 }
+
+function leadslide_custom_post_type_template($single_template) {
+    global $post;
+
+    if ($post->post_type == 'leadslide_campaign') { // Make sure this matches your post type name
+        $single_template = plugin_dir_path(__FILE__) . 'templates/leadslide-page-template.php';
+    }
+
+    return $single_template;
+}
+add_filter('single_template', 'leadslide_custom_post_type_template');
+
+
+function leadslide_create_custom_post_type() {
+    register_post_type('leadslide_campaign',
+        array(
+            'labels'      => array(
+                'name'          => __('Leadslide Campaigns'),
+                'singular_name' => __('Leadslide Campaign')
+            ),
+            'public'      => true,
+            'has_archive' => true,
+            'supports'    => array('title', 'editor', 'thumbnail'),
+            'rewrite'     => array('slug' => 'leadslide-campaigns')
+        )
+    );
+}
+
+function leadslide_add_meta_boxes() {
+    add_meta_box(
+        'leadslide_campaign_details',
+        'Leadslide Campaign Details',
+        'leadslide_campaign_meta_box_callback',
+        'leadslide_campaign'
+    );
+}
+add_action('add_meta_boxes', 'leadslide_add_meta_boxes');
+
+function leadslide_campaign_meta_box_callback($post) {
+    // Add nonce for security and authentication.
+    wp_nonce_field('leadslide_campaign_nonce_action', 'leadslide_campaign_nonce');
+
+    // Retrieve existing values from the database.
+    $campaign_id = get_post_meta($post->ID, 'campaign_id', true);
+    $publish_api_key = get_post_meta($post->ID, 'publish_api_key', true);
+
+    // Form fields.
+    echo '<label for="campaign_id">Campaign ID:</label>';
+    echo '<input type="text" id="campaign_id" name="campaign_id" value="' . esc_attr($campaign_id) . '" />';
+
+    echo '<label for="publish_api_key">Publish API Key:</label>';
+    echo '<input type="text" id="publish_api_key" name="publish_api_key" value="' . esc_attr($publish_api_key) . '" />';
+}
+
+function leadslide_save_postdata($post_id) {
+    if (!isset($_POST['leadslide_campaign_nonce']) ||
+        !wp_verify_nonce($_POST['leadslide_campaign_nonce'], 'leadslide_campaign_nonce_action')) {
+        return;
+    }
+
+    if (array_key_exists('campaign_id', $_POST)) {
+        update_post_meta(
+            $post_id,
+            'campaign_id',
+            sanitize_text_field($_POST['campaign_id'])
+        );
+    }
+    if (array_key_exists('publish_api_key', $_POST)) {
+        update_post_meta(
+            $post_id,
+            'publish_api_key',
+            sanitize_text_field($_POST['publish_api_key'])
+        );
+    }
+}
+add_action('save_post', 'leadslide_save_postdata');

@@ -26,6 +26,11 @@ if (empty($leadslide_campaign_id) || empty($leadslide_publish_api_key)) {
             margin: 0;
             padding: 0;
         }
+        #leadslidePageFrame {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
     </style>
     <title>
         <?php echo esc_html(get_the_title()); ?>
@@ -36,6 +41,9 @@ if (empty($leadslide_campaign_id) || empty($leadslide_publish_api_key)) {
 <iframe
         id="leadslidePageFrame"
         src="<?php echo esc_url($BASE_LEADSLIDE_VIEW_URL . '?cid=' . $leadslide_campaign_id . '&pak=' . $leadslide_publish_api_key); ?>"
+        style="width:100%; height:100%; border:none;"
+></iframe>
+
 </body>
 </html>
 

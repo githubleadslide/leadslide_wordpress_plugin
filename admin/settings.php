@@ -3,9 +3,6 @@ if ( ! defined( 'ABSPATH' ) ) {
     exit; // Exit if accessed directly
 }
 
-add_action('admin_init', 'leadslide_delete_leadslide_template');
-add_action('admin_init', 'leadslide_install_leadslide_template');
-
 function leadslide_settings_page() {
     /**
      * The settings page will allow the user to enter their API key and save it.
@@ -33,8 +30,6 @@ function leadslide_settings_page() {
 
         <?php settings_errors(); ?>
 
-        <?php settings_errors(); ?>
-
         <form action="options.php" method="post">
             <?php
             settings_fields('leadslide_options');
@@ -44,22 +39,9 @@ function leadslide_settings_page() {
             ?>
         </form>
 
-        <?php if (!file_exists($template_file)) : ?>
-            <p>
-                The 'Install Leadslide Page Template' button allows you to add a custom page template to your theme. This template is designed specifically for displaying Leadslide campaigns on your site. Clicking this button will automatically copy the necessary template file into your current theme's directory, enabling you to select it when creating or editing pages. This ensures that your campaigns are displayed optimally, utilizing Leadslide's tailored layout and design.
-            </p>
-            <form action="" method="post">
-                <?php wp_nonce_field('leadslide-install-template-action', 'leadslide-install-template-nonce'); ?>
-                <input type="hidden" name="action" value="install_leadslide_template">
-                <?php submit_button('Install Leadslide Page Template'); ?>
-            </form>
-        <?php else : ?>
-            <form action="" method="post">
-                <?php wp_nonce_field('leadslide-delete-template-action', 'leadslide-delete-template-nonce'); ?>
-                <input type="hidden" name="action" value="delete_leadslide_template">
-                <?php submit_button('Delete Leadslide Page Template'); ?>
-            </form>
-        <?php endif; ?>
+        <p>
+            Use the new "Leadslide Campaigns" custom post type to manage your campaigns. You can add new campaigns, edit existing ones, and manage all your content directly through this custom post type.
+        </p>
 
     </div>
     <?php
@@ -83,86 +65,6 @@ function leadslide_auth_user($user_can='manage_options', $action, $nonce_field, 
         if (!isset($_POST[$nonce_field]) || !check_admin_referer($action, $nonce_field)) {
             wp_die(__('Nonce verification failed.', 'leadslide-text-domain'));
         }
-    }
-}
-function leadslide_delete_leadslide_template() {
-    /**
-     * This function will delete the Leadslide page template from the theme directory.
-     */
-
-    if (isset($_POST['action']) && sanitize_text_field($_POST['action']) === 'delete_leadslide_template') {
-        leadslide_auth_user('manage_options', 'leadslide-delete-template-action', 'leadslide-delete-template-nonce');
-    }
-
-    global $LS_PAGE_TEMPLATE_PATH;
-    $action_posted = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
-
-    if ($action_posted === 'delete_leadslide_template') {
-        $theme_dir = get_template_directory();
-        $template_file = $theme_dir . '/leadslide-page-template.php';
-
-        if (file_exists($template_file)) {
-            if (unlink($template_file)) {
-                add_settings_error('leadslide_options', 'template_deleted', 'Leadslide page template deleted successfully.', 'updated');
-            } else {
-                add_settings_error('leadslide_options', 'delete_failed', 'Could not delete the Leadslide page template. Please check the permissions of your theme directory.');
-            }
-        } else {
-            add_settings_error('leadslide_options', 'template_not_found', 'Leadslide page template not found in the theme directory.', 'updated');
-        }
-        /**
-         * set_transient is used to store the settings errors in a transient, this is  a std WP function
-         * get_settings_errors is used to retrieve the errors from the transient and display them
-         * Both of these functions are WP functions.
-         */
-        set_transient('leadslide_settings_errors', get_settings_errors(), 30);
-
-        $goback = add_query_arg('settings-updated', 'true', wp_get_referer());
-        wp_redirect($goback);
-        exit;
-    }
-}
-
-function leadslide_install_leadslide_template() {
-    /**
-     * This function will install the Leadslide page template in the theme directory.
-     */
-
-    if (isset($_POST['action']) && sanitize_text_field($_POST['action']) === 'install_leadslide_template') {
-        leadslide_auth_user('manage_options', 'leadslide-install-template-action', 'leadslide-install-template-nonce');
-    }
-
-    global $LS_PAGE_TEMPLATE_PATH;
-    $action_posted = isset($_POST['action']) ? sanitize_text_field($_POST['action']) : '';
-
-    if ($action_posted === 'install_leadslide_template') {
-        $template_file = $LS_PAGE_TEMPLATE_PATH;
-        if (file_exists($template_file)) {
-            $theme_dir = get_template_directory();
-            $destination_file = $theme_dir . '/leadslide-page-template.php';
-
-            if (!file_exists($destination_file)) {
-                if (copy($template_file, $destination_file)) {
-                    add_settings_error('leadslide_options', 'template_installed', 'Leadslide page template installed successfully.', 'updated');
-                } else {
-                    add_settings_error('leadslide_options', 'install_failed', 'Could not install the Leadslide page template. Please check the permissions of your theme directory.');
-                }
-            } else {
-                add_settings_error('leadslide_options', 'template_exists', 'Leadslide page template already exists in the theme directory.', 'updated');
-            }
-        } else {
-            add_settings_error('leadslide_options', 'template_not_found', 'Leadslide page template not found in the plugin directory.');
-        }
-        /**
-         * set_transient is used to store the settings errors in a transient, this is  a std WP function
-         * get_settings_errors is used to retrieve the errors from the transient and display them
-         * Both of these functions are WP functions.
-         */
-        set_transient('leadslide_settings_errors', get_settings_errors(), 30);
-
-        $goback = add_query_arg('settings-updated', 'true', wp_get_referer());
-        wp_redirect($goback);
-        exit;
     }
 }
 

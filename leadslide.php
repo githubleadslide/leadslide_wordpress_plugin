@@ -27,5 +27,4 @@ $LS_PAGE_TEMPLATE_PATH = plugin_dir_path(__FILE__) . '/templates/leadslide-page-
 require_once plugin_dir_path(__FILE__) . 'admin/menu-and-pages.php';
 require_once plugin_dir_path(__FILE__) . 'admin/settings.php';
 require_once plugin_dir_path(__FILE__) . 'admin/campaigns.php';
-require_once plugin_dir_path(__FILE__) . 'admin/templates.php';
 
