@@ -1,0 +1,36 @@
+.leadslide-table {
+    width: 80%;
+    max-width: 1000px;
+    margin:100px auto;
+    border-collapse: collapse;
+}
+
+.leadslide-table th, .leadslide-table td {
+    padding: 10px;
+    border: 1px solid #ddd;
+}
+
+.leadslide-table th {
+    background-color: #f7f7f7;
+    font-weight: bold;
+}
+
+.leadslide-table .add-campaign-button,
+.leadslide-table .manage-campaign-button {
+    padding: 3px 10px;
+    background-color: #007cba;
+    border-color: #007cba;
+    color: #fff;
+    cursor: pointer;
+}
+
+.leadslide-table .manage-campaign-button {
+    background-color: #999;
+    border-color: #999;
+    color: #fff;
+}
+
+.leadslide-table .add-campaign-button:hover,
+.leadslide-table .manage-campaign-button:hover {
+    cursor: pointer;
+}

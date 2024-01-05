@@ -23,6 +23,8 @@ function leadslide_add_app_page() {
         'leadslide-settings',
         'leadslide_settings_page'
     );
+
+
 }
 
 

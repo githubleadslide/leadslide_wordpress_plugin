@@ -19,10 +19,18 @@ global $BASE_LS_API_URL, $BASE_LS_VIEW_URL,$LS_PAGE_TEMPLATE_PATH,$BASE_LEADSLID
  * $BASE_LEADSLIDE_WP_URL is the base URL for the WordPress site.
  */
 $BASE_LS_API_URL = 'https://ai.leadslide.com/api/basic/wp/';
-$BASE_LEADSLIDE_VIEW_URL  = 'https://ai.leadslide.com/campaign/cp/';
+$BASE_LEADSLIDE_VIEW_URL  = 'https://ai.leadslide.com/campaign/';
+
+//$BASE_LS_API_URL = 'http://leadslide.api:8000/api/basic/wp/';
+//$BASE_LEADSLIDE_VIEW_URL  = 'http://localhost:8080/campaign/';
+
 $BASE_LEADSLIDE_WP_URL = get_site_url();
 
 $LS_PAGE_TEMPLATE_PATH = plugin_dir_path(__FILE__) . '/templates/leadslide-page-template.php';
+function leadslide_enqueue_admin_styles() {
+    wp_enqueue_style('leadslide_admin_styles', plugin_dir_url(__FILE__) . 'admin/assets/css/style.css');
+}
+add_action('admin_enqueue_scripts', 'leadslide_enqueue_admin_styles');
 
 require_once plugin_dir_path(__FILE__) . 'admin/menu-and-pages.php';
 require_once plugin_dir_path(__FILE__) . 'admin/settings.php';

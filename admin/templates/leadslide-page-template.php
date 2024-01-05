@@ -42,7 +42,7 @@ if (empty($leadslide_campaign_id) || empty($leadslide_publish_api_key)) {
 <body>
 <iframe
         id="leadslidePageFrame"
-        src="<?php echo esc_url($BASE_LEADSLIDE_VIEW_URL . '?cid=' . $leadslide_campaign_id . '&pak=' . $leadslide_publish_api_key); ?>"
+        src="<?php echo esc_url($BASE_LEADSLIDE_VIEW_URL . 'cp/?cid=' . $leadslide_campaign_id . '&pak=' . $leadslide_publish_api_key); ?>"
         style="width:100%; height:100%; border:none;"
 ></iframe>
 

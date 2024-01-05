@@ -1,0 +1,34 @@
+#leadslide-popup-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right:0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    background: rgba(0,0,0,0.8);
+    z-index: 999999;
+    display: none;
+}
+
+#leadslide-popup {
+    width: 560px;
+    height: 380px;
+    margin: 0 auto;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    background: #fff;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#leadslide-popup iframe {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    border: none;
+}
+

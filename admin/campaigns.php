@@ -50,13 +50,13 @@ function leadslide_manage_campaign() {
     }
 
     // Force a boolean
-    $is_new = filter_var(isset($_POST['is_new']) ? sanitize_text_field($_POST['is_new']) : false, FILTER_VALIDATE_BOOLEAN);
+    $is_new = filter_var(isset($_POST['is_new']) ? sanitize_text_field(wp_unslash($_POST['is_new'])) : false, FILTER_VALIDATE_BOOLEAN);
 
     if ($is_new === true || $is_new === 'true') {
-        $campaign_name = sanitize_text_field($_POST['campaign_name']);
-        $campaign_id = sanitize_text_field($_POST['campaign_id']);
-        $publish_api_key = sanitize_text_field($_POST['publish_api_key']);
-        $campaign_url = sanitize_text_field($_POST['campaign_url']);
+        $campaign_name = sanitize_text_field(wp_unslash($_POST['campaign_name']));
+        $campaign_id = sanitize_text_field(wp_unslash($_POST['campaign_id']));
+        $publish_api_key = sanitize_text_field(wp_unslash($_POST['publish_api_key']));
+        $campaign_url = sanitize_text_field(wp_unslash($_POST['campaign_url']));
 
         // Use custom post type 'leadslide_campaign'
         $post_name = sanitize_title($campaign_url);
@@ -87,8 +87,8 @@ function leadslide_manage_campaign() {
         wp_die();
     }
 
-    $post_id = sanitize_text_field($_POST['page_id']);
-    $action = sanitize_text_field($_POST['campaign_action']);
+    $post_id = sanitize_text_field(wp_unslash($_POST['page_id']));
+    $action = sanitize_text_field(wp_unslash($_POST['campaign_action']));
     if ($action === 'delete') {
         // delete the custom post type post
         $deleted = wp_delete_post($post_id, true);
@@ -145,53 +145,13 @@ function leadslide_publish_campaign() {
     } else {
         $data = json_decode($response['body'], true);
         if (isset($data['data'])) {
-            // Add CSS styles inline
-            echo '<style>
-                    /* Add spacing and match WordPress admin design */
-                    table {
-                        width: 80%;
-                        max-width: 1000px;
-                        margin: 100px auto 0;
-                        border-collapse: collapse;
-                    }
-
-                    th, td {
-                        padding: 10px;
-                        border: 1px solid #ddd;
-                    }
-
-                    th {
-                        background-color: #f7f7f7;
-                        font-weight: bold;
-                    }
-
-                    .add-campaign-button,
-                    .manage-campaign-button {
-                        padding: 3px 10px;
-                        background-color: #007cba;
-                        border-color: #007cba;
-                        color: #fff;
-                        cursor: pointer;
-                    }
-
-                    .manage-campaign-button {
-                        background-color: #999;
-                        border-color: #999;
-                        color: #fff;
-                    }
-
-                    .add-campaign-button:hover,
-                    .manage-campaign-button:hover {
-                        cursor: pointer;
-                    }
-                </style>';
             echo '<h1>Campaigns</h1>';
             echo '<p>This is the campaigns page where you can activate published campaigns.</p>';
 
             echo '<p>To manage or edit pages and campaigns, please do so through <a href="https://www.leadslide.com" target="_blank">leadslide.com</a>.</p>';
 
             // Generate the list
-            echo '<table>';
+            echo '<table class="leadslide-table">';
             echo '<tr><th>ID</th><th>Name</th><th>URL</th><th>Actions</th></tr>';
             foreach ($data['data'] as $item) {
                 echo '<tr>';
@@ -308,14 +268,14 @@ function leadslide_save_postdata($post_id) {
         update_post_meta(
             $post_id,
             'campaign_id',
-            sanitize_text_field($_POST['campaign_id'])
+            sanitize_text_field(wp_unslash($_POST['campaign_id']))
         );
     }
     if (array_key_exists('publish_api_key', $_POST)) {
         update_post_meta(
             $post_id,
             'publish_api_key',
-            sanitize_text_field($_POST['publish_api_key'])
+            sanitize_text_field(wp_unslash($_POST['publish_api_key']))
         );
     }
 }

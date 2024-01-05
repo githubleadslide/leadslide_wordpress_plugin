@@ -61,14 +61,10 @@ function leadslide_settings_page() {
     <?php
 }
 
-function leadslide_auth_user($user_can='manage_options', $action, $nonce_field, $ajax=false) {
+function leadslide_auth_user($user_can, $action, $nonce_field, $ajax=false) {
     /**
      * This function will check if the user is authorized to perform the action.
      */
-    if (!current_user_can($user_can)) {
-        wp_die(__('You do not have sufficient permissions to access this page.'));
-    }
-
     if($ajax)
     {
         if(!check_ajax_referer($action, $nonce_field, false))
@@ -79,6 +75,10 @@ function leadslide_auth_user($user_can='manage_options', $action, $nonce_field, 
         if (!isset($_POST[$nonce_field]) || !check_admin_referer($action, $nonce_field)) {
             wp_die(__('Nonce verification failed.', 'leadslide-text-domain'));
         }
+    }
+
+    if (!current_user_can($user_can)) {
+        wp_die(__('You do not have sufficient permissions to access this page.'));
     }
 }
 
