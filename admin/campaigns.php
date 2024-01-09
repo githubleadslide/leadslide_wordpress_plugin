@@ -260,7 +260,7 @@ function leadslide_campaign_meta_box_callback($post) {
 
 function leadslide_save_postdata($post_id) {
     if (!isset($_POST['leadslide_campaign_nonce']) ||
-        !wp_verify_nonce($_POST['leadslide_campaign_nonce'], 'leadslide_campaign_nonce_action')) {
+        !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['leadslide_campaign_nonce'])), 'leadslide_campaign_nonce_action')) {
         return;
     }
 
