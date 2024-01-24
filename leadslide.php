@@ -18,11 +18,11 @@ global $BASE_LS_API_URL, $BASE_LS_VIEW_URL,$LS_PAGE_TEMPLATE_PATH,$BASE_LEADSLID
  * $LS_PAGE_TEMPLATE_PATH is the path to the LeadSlide page template.
  * $BASE_LEADSLIDE_WP_URL is the base URL for the WordPress site.
  */
-$BASE_LS_API_URL = 'https://ai.leadslide.com/api/basic/wp/';
-$BASE_LEADSLIDE_VIEW_URL  = 'https://ai.leadslide.com/campaign/';
+//$BASE_LS_API_URL = 'https://ai.leadslide.com/api/basic/wp/';
+//$BASE_LEADSLIDE_VIEW_URL  = 'https://ai.leadslide.com/campaign/';
 
-//$BASE_LS_API_URL = 'http://leadslide.api:8000/api/basic/wp/';
-//$BASE_LEADSLIDE_VIEW_URL  = 'http://localhost:8080/campaign/';
+$BASE_LS_API_URL = 'http://leadslide.api:8000/api/basic/wp/';
+$BASE_LEADSLIDE_VIEW_URL  = 'http://localhost:8080/campaign/';
 
 $BASE_LEADSLIDE_WP_URL = get_site_url();
 
@@ -35,4 +35,5 @@ add_action('admin_enqueue_scripts', 'leadslide_enqueue_admin_styles');
 require_once plugin_dir_path(__FILE__) . 'admin/menu-and-pages.php';
 require_once plugin_dir_path(__FILE__) . 'admin/settings.php';
 require_once plugin_dir_path(__FILE__) . 'admin/campaigns.php';
+require_once plugin_dir_path(__FILE__) . 'admin/popups.php';
 

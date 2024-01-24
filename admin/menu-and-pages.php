@@ -17,14 +17,21 @@ function leadslide_add_app_page() {
 
     add_submenu_page(
         'leadslide-publish-campaign',
+        'Popups',
+        'Popups',
+        'manage_options',
+        'leadslide-popups',
+        'leadslide_popups_page'
+    );
+
+    add_submenu_page(
+        'leadslide-publish-campaign',
         'Leadslide',
         'Settings',
         'manage_options',
         'leadslide-settings',
         'leadslide_settings_page'
     );
-
-
 }
 
 
