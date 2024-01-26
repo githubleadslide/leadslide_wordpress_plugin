@@ -3,7 +3,9 @@ function leadslide_register_shortcode() {
     add_shortcode('leadslide_popup', 'leadslide_popup_shortcode_handler');
 }
 add_action('init', 'leadslide_register_shortcode');
+
 function leadslide_popups_page() {
+    global $BASE_LEADSLIDE_VIEW_URL;
     /**
      * This is the admin page popups.
      * The API will be sent and a list of available popup campaigns
@@ -53,16 +55,20 @@ function leadslide_popups_page() {
     echo '<p>LeadSlide popup campaigns can be added by using a shortcode from the table below.</p>';
     echo '<p>A list of attributes can be given to the shortcode to allow you to customise it.</p>';
     echo '<table class="leadslide-table">';
-    echo '<thead><tr><th>Campaign Name</th><th>Shortcode</th></tr></thead>';
+    echo '<thead><tr><th>Campaign Name</th><th style="width:300px;">Shortcode</th><th>Embed Code</th><th>Actions</th></tr></thead>';
     echo '<tbody>';
 
     foreach ($data as $item) {
         $shortcode_tag = 'leadslide_popup id="' . $item[0]['public_id'] . '" key="' . $item[0]['publish_api_key'] . '"';
-
+        $embed_code = htmlentities('<iframe src="' . $BASE_LEADSLIDE_VIEW_URL . 'popup/' . $item[0]['public_id'] . '/' . $item[0]['publish_api_key'] . '" width="560" height="315"></iframe>');
+        $embed_code_to_copy = $embed_code;
         // Display the campaign name and shortcode in a table row
         echo '<tr>';
         echo '<td>' . esc_html($item[0]['campaign_name']) . '</td>';
         echo '<td>[' . esc_html($shortcode_tag) . ']</td>';
+        echo '<td><textarea rows="12" readonly>' . $embed_code . '</textarea></td>';
+        echo '<td><button onclick="leadslidecopyToClipboard(this, \'Coppied embed code\')" data-clipboard-text="' . esc_attr($embed_code_to_copy) . '">Copy Embed Code</button>';
+        echo '<button onclick="leadslidecopyToClipboard(this, \'Coppied shortcode\')" data-clipboard-text="' . esc_attr($shortcode_tag) . '">Copy Shortcode</button></td>';
         echo '</tr>';
     }
     // list of available attrbiutes
@@ -101,6 +107,20 @@ function leadslide_popups_page() {
         echo '</tr>';
     }
     echo '</tbody></table>';
+
+    echo '<script type="text/javascript">
+        const leadslidecopyToClipboard = (button, message) => {
+            let textToCopy = button.getAttribute("data-clipboard-text");
+    
+            navigator.clipboard.writeText(textToCopy).then(function () {
+                alert(message);
+            })
+            .catch(function (err) {
+                console.error("Error in copying text: ", err);
+            });
+        }
+    </script>';
+
 
 }
 
@@ -191,6 +211,8 @@ function leadslide_popup_shortcode_handler($atts = [], $content = null, $tag = '
         popupWrapper.addEventListener("click", function(e) {
             popupWrapper.style.display = "none";
         });
+        
+        
     });
 </script>';
 
