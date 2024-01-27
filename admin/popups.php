@@ -59,16 +59,17 @@ function leadslide_popups_page() {
     echo '<tbody>';
 
     foreach ($data as $item) {
+
         $shortcode_tag = 'leadslide_popup id="' . $item[0]['public_id'] . '" key="' . $item[0]['publish_api_key'] . '"';
-        $embed_code = htmlentities('<iframe src="' . $BASE_LEADSLIDE_VIEW_URL . 'popup/' . $item[0]['public_id'] . '/' . $item[0]['publish_api_key'] . '" width="560" height="315"></iframe>');
+        $embed_code = htmlentities('<iframe scrolling="no" src="' . $BASE_LEADSLIDE_VIEW_URL . 'popup/' . $item[0]['public_id'] . '/' . $item[0]['publish_api_key'] . '" width="560" height="315"></iframe>');
         $embed_code_to_copy = $embed_code;
         // Display the campaign name and shortcode in a table row
         echo '<tr>';
         echo '<td>' . esc_html($item[0]['campaign_name']) . '</td>';
         echo '<td>[' . esc_html($shortcode_tag) . ']</td>';
         echo '<td><textarea rows="12" readonly>' . $embed_code . '</textarea></td>';
-        echo '<td><button onclick="leadslidecopyToClipboard(this, \'Coppied embed code\')" data-clipboard-text="' . esc_attr($embed_code_to_copy) . '">Copy Embed Code</button>';
-        echo '<button onclick="leadslidecopyToClipboard(this, \'Coppied shortcode\')" data-clipboard-text="' . esc_attr($shortcode_tag) . '">Copy Shortcode</button></td>';
+        echo '<td><button onclick="leadslidecopyToClipboard(this, \'Copied embed code\')" data-clipboard-text="' . esc_attr($embed_code_to_copy) . '">Copy Embed Code</button>';
+        echo '<button onclick="leadslidecopyToClipboard(this, \'Copied shortcode\')" data-clipboard-text="' . esc_attr($shortcode_tag) . '">Copy Shortcode</button></td>';
         echo '</tr>';
     }
     // list of available attrbiutes
@@ -186,10 +187,7 @@ function leadslide_popup_shortcode_handler($atts = [], $content = null, $tag = '
     // get content from a get request to the api $BASE_LS_API_URL + 'short-code/' + $popup_id + '/' + $popup_key
     $popup_iframe_url = $BASE_LEADSLIDE_VIEW_URL . 'popup/' . $popup_id . '/' . $popup_key;
     $popup_iframe_url = esc_url($popup_iframe_url);
-    $popup_styles = '';
     $popup_iframe = '<a href="#" class="' . esc_attr($atts['class']) . '" style="' . esc_attr($atts['style']) . '">' . esc_html($atts['text']) . '</a>';
-//    $popup_iframe .= '<div id="leadslide-popup-wrapper"><div id="leadslide-popup">';
-//    $popup_iframe .= '<iframe scrolling="no" src="' . $popup_iframe_url . '" style="width: 560px height: 240px;></iframe></div></div>';
     $popup_iframe .= '<script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
         let popupWrapper = document.createElement("div");
