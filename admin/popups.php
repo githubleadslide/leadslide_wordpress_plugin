@@ -94,6 +94,22 @@ function leadslide_popups_page() {
             'description' => 'The style to apply to the link. We recommend using class instead of styles. Default: none',
             'required' => false
         ],
+        'height' => [
+            'description' => 'Height of the popup. Default: 380',
+            'required' => false
+        ],
+        'mobile_height' => [
+            'description' => 'Height of the popup on mobile. Default: 380',
+            'required' => false
+        ],
+        'width' => [
+            'description' => 'Width of the popup. Default: 560',
+            'required' => false
+        ],
+        'mobile_width' => [
+            'description' => 'Width of the popup on mobile. Default: 560',
+            'required' => false
+        ]
     ];
     echo '</tbody></table>';
     echo '<h2>Custom Attributes</h2>';
@@ -146,6 +162,22 @@ function leadslide_popup_shortcode_handler($atts = [], $content = null, $tag = '
             'required' => false,
             'default' => 'leadslide-popup-trigger'
         ],
+        'height' => [
+            'required' => false,
+            'default' => '380'
+        ],
+        'width' => [
+            'required' => false,
+            'default' => '560'
+        ],
+        'mobile_height' => [
+            'required' => false,
+            'default' => '380'
+        ],
+        'mobile_width' => [
+            'required' => false,
+            'default' => '560'
+        ],
         'style' => [
             'required' => false,
             'default' => ''
@@ -182,6 +214,12 @@ function leadslide_popup_shortcode_handler($atts = [], $content = null, $tag = '
     // get popup id and key from attr
     $popup_id = sanitize_text_field($atts['id']);
     $popup_key = sanitize_text_field($atts['key']);
+    // Popup width and height
+    $popup_height = esc_attr($atts['height']);
+    $popup_width = esc_attr($atts['width']);
+
+    $popup_mobile_height = esc_attr($atts['mobile_height']);
+    $popup_mobile_width = esc_attr($atts['mobile_width']);
     // get popup data from api
     global $BASE_LEADSLIDE_VIEW_URL;
     // get content from a get request to the api $BASE_LS_API_URL + 'short-code/' + $popup_id + '/' + $popup_key
@@ -190,13 +228,22 @@ function leadslide_popup_shortcode_handler($atts = [], $content = null, $tag = '
     $popup_iframe = '<a href="#" class="' . esc_attr($atts['class']) . '" style="' . esc_attr($atts['style']) . '">' . esc_html($atts['text']) . '</a>';
     $popup_iframe .= '<script type="text/javascript">
     document.addEventListener("DOMContentLoaded", function() {
+        console.log("MH: '.$popup_mobile_height.'");
         let popupWrapper = document.createElement("div");
         popupWrapper.id = "leadslide-popup-wrapper";
         let popup = document.createElement("div");
         popup.id = "leadslide-popup";
+        function resizePopup() {
+            popup.style.height = window.matchMedia("(max-width: 469px)").matches ? "'.$popup_mobile_height.'px" : "'.$popup_height.'px";
+            popup.style.width = window.matchMedia("(max-width: 469px)").matches ? "'.$popup_mobile_width.'px" : "'.$popup_width.'px";
+        }
+        resizePopup();
+        window.addEventListener("resize", resizePopup);
         popupWrapper.appendChild(popup);
         let iframe = document.createElement("iframe");
         iframe.src = "' . esc_url($popup_iframe_url) . '";
+        iframe.style.width = "100%";
+        iframe.style.maxWidth = "100%";
         iframe.scrolling = "no";
         popup.appendChild(iframe);
         document.body.appendChild(popupWrapper);
@@ -209,10 +256,8 @@ function leadslide_popup_shortcode_handler($atts = [], $content = null, $tag = '
         popupWrapper.addEventListener("click", function(e) {
             popupWrapper.style.display = "none";
         });
-        
-        
     });
-</script>';
+    </script>';
 
 
 

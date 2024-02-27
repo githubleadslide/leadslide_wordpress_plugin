@@ -15,7 +15,7 @@
 
 #leadslide-popup {
     width: 560px;
-    height: 380px;
+    min-height: 380px;
     margin: 0 auto;
     position: relative;
     top: 50%;
@@ -23,10 +23,12 @@
     background: #fff;
     border-radius: 5px;
     overflow: hidden;
+    max-width: 90%!important;
 }
 
 #leadslide-popup iframe {
     width: 100%;
+    min-height: 380px;
     height: 100%;
     overflow: hidden;
     border: none;
